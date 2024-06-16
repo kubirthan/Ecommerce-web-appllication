@@ -19,7 +19,7 @@ exports.newProduct = async (req,res,next) => {
     })
 }
 
-//Get single products
+//Get single products - /api/vi/product/:id
 exports.getSingleProduct = async (req,res,next)=> {
    const product = await Product.findById(req.params.id)
 
@@ -30,8 +30,33 @@ exports.getSingleProduct = async (req,res,next)=> {
     })
    }
 
-   res.status(201).json({
+   res.status(
+    
+
+   ).json({
     success: true,
     product
    })
+}
+
+//update product - /api/v1/product/:id
+exports.updateProduct = async (req,res,next)=>{
+      let product = await Product.findById(req.params.id)
+
+      if(!product){
+        return res.status(404).json({
+            success:false,
+            message: "product not found"
+        })
+      }
+
+      product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+      })
+
+      res.status(200).json({
+        success: true,
+        product
+      })
 }
