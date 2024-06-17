@@ -60,3 +60,24 @@ exports.updateProduct = async (req,res,next)=>{
         product
       })
 }
+
+
+//delete product - /api/v1/product:id
+exports.deleteProduct = async (req,res,next)=>{
+    const product = Product.findById(req.params.id)
+
+    if(!product){
+        return res.status(404).json({
+            success: false,
+            message: "product not found"
+        })
+    }
+
+    await product.deleteOne()
+
+    res.status(200).json({
+        success: true,
+        message: "Product deleted"
+    })
+
+}
