@@ -6,8 +6,6 @@ const mongoose = require('mongoose')
         useUnifiedTopology:true
     }).then(con=>{
         console.log(`mongodb is connected to the host: ${con.connection.host}`);
-    }).catch((err)=>{
-        console.log(err);
     })
  }
 
