@@ -6,7 +6,7 @@ const APIFeatures = require('../utils/apiFeature')
 
 //get products - /api/v1/products
 exports.getProducts = catchAsyncError(async (req,res,next) => {
-    const apiFeature = new APIFeatures(Product.find(), req.query).search()
+    const apiFeature = new APIFeatures(Product.find(), req.query).search().filter()
 
     const products = await apiFeature.query
     res.status(200).json({
