@@ -27,5 +27,5 @@ process.on('uncaughtException', (err)=>{
     })
 })
 
-console.log(a);
+
 
