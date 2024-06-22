@@ -1,3 +1,5 @@
+const { json } = require("express")
+
 class APIFeatures {
     constructor(query, queryStr){
         this.query = query
@@ -23,8 +25,11 @@ class APIFeatures {
             const removeFields = ['keyword', 'limit', 'page']
             removeFields.forEach(field => delete queryStrCopy[field])
 
-            this.query.find(queryStrCopy)
-
+            let queryStr = JSON.stringify(queryStrCopy)
+            queryStr =   queryStr.replace(/\b(gt|gte|lt|lte)/g, match => `$${match}`)
+            
+            this.query.find(JSON.parse(queryStr))
+            
             return this
     }
 }
