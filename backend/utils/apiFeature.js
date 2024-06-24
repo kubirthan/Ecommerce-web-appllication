@@ -27,10 +27,17 @@ class APIFeatures {
 
             let queryStr = JSON.stringify(queryStrCopy)
             queryStr =   queryStr.replace(/\b(gt|gte|lt|lte)/g, match => `$${match}`)
-            
+
             this.query.find(JSON.parse(queryStr))
             
             return this
+    }
+
+    paginate(resPerPge) {
+        const currentPage = Number(this.queryStr.page) || 1
+        const skip = resPerPge * currentPage - 1
+        this.query.limit(resPerPge).skip(skip)
+        return this
     }
 }
 
