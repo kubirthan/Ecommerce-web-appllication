@@ -89,3 +89,30 @@ exports.forgotPassword = catchAsyncError(async (req,res,next)=> {
         return next(new ErrorHandler(error.message),500)
    }
 })
+
+exports.resetPassword = catchAsyncError(async (req,res,next)=> {
+  const resetpasswordToken =  crypto.createHash('sha256').update(req.params.token).digest('hex')
+
+  const user = await User.findOne(
+    {resetpasswordToken,
+        resetpasswordTokenExpire: {
+            $gt : Date.now()
+        }
+    }
+)
+
+    if(!user) {
+    return next(new ErrorHandler('password reset token is invalid or expired'))
+    }
+
+    if(req.body.password !== req.body.confirmPassword)
+        return next(new ErrorHandler('password does not match')
+    )
+
+    user.password = req.body.password
+    user.resetpasswordToken = undefined
+    user.resetpasswordTokenExpire = undefined
+    await user.save({validateBeforeSave: false})
+
+    sendToken(user, 201, res)
+})
