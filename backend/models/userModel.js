@@ -42,6 +42,9 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.pre('save', async function(next){
+    if(!this.isModified('password')){
+        next()
+    }
     this.password = await bcrypt.hash(this.password, 10)
 })
 
@@ -55,7 +58,7 @@ userSchema.methods.isValidPassword = async function(enteredPassword){
    return await bcrypt.compare(enteredPassword, this.password)
 }
 
-userSchema.methods.resetPassword = function(){
+userSchema.methods.getResetToken = function(){
     //generate token
     const token = crypto.randomBytes(20).toString('hex')
 

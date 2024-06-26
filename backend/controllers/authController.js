@@ -1,5 +1,6 @@
 const catchAsyncError = require('../middlewares/catchAsyncError')
 const User = require('../models/userModel')
+const sendEmail = require('../utils/email')
 const ErrorHandler = require('../utils/errorHandler')
 const sendToken = require('../utils/jwt')
 const crypto = require('crypto')
@@ -50,3 +51,41 @@ exports.logoutUser = (req,res,next) => {
         message: "loggedout"
     })
 } 
+
+exports.forgotPassword = catchAsyncError(async (req,res,next)=> {
+   const user =  User.findOne({email: req.body.email})
+
+   if(!user) {
+    return next(new ErrorHandler('user not found with this email', 404))
+   }
+
+   const resetToken = user.getResetToken()
+   await user.save({validateBeforeSave: false})
+
+   //Create reset url
+   const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/password/reset/${resetToken}`
+
+   const message = `Your password rseset url is as follows nn
+   ${resetUrl} \n\n If you have not request this email, then ignore it.`
+
+   try{
+
+        sendEmail({
+            email: user.email,
+            subject: "jvl cart password recovery",
+            message
+        
+        })
+
+        res.status(200).json({
+            success: true,
+            message: `Email sent to ${user.email}`
+        })
+
+   }catch(error){
+        user.resetpasswordToken = undefined
+        user.resetpasswordTokenExpire = undefined
+        await user.save({validateBeforeSave: false})
+        return next(new ErrorHandler(error.message),500)
+   }
+})
