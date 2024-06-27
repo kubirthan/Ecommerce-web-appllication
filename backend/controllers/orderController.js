@@ -1,5 +1,7 @@
 const catchasyncrError = require('../middlewares/catchAsyncError')
 const Order = require('../models/orderModel')
+const Product = require('../models/productModel')
+const ErrorHandler = require('../utils/errorHandler')
 
 //create new order - api/v1/order/new
 exports.newOrder = catchasyncrError(async (req,res,next)=>{
@@ -29,4 +31,20 @@ exports.newOrder = catchasyncrError(async (req,res,next)=>{
         success: true,
         order
     })
+})
+
+
+//get single order - api/v1/order/:id
+exports.getSingleOrder = catchasyncrError(async (req,res,next)=> {
+    const order = await Order.findById(req.params.id).populate('user', 'name email')
+    if(!order){
+        return next(new ErrorHandler(`Order not found this id ${req.params.id}`, 404))
+    }
+
+    res.status(200).json({
+        success: true,
+        order
+    })
+
+
 })
