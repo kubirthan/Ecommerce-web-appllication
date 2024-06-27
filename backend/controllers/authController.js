@@ -148,7 +148,7 @@ exports.changePassword = catchAsyncError(async (req,res,next)=>{
   })
 })
 
-//update profile
+//update profile - /api/v1/update
 exports.updateProfile =  catchAsyncError(async (req,res,next)=>{
     const newUserData = {
         name: req.body.name,
@@ -163,5 +163,57 @@ exports.updateProfile =  catchAsyncError(async (req,res,next)=>{
     res.status(200).json({
         success: true,
         user
+    })
+})
+
+//admin: Get all users - /api/v1/admin/users
+exports.getAllUsers =  catchAsyncError(async (req,res,next)=>{
+    const users = await User.find()
+    res.status(200).json({
+        success:true,
+        users
+    })
+})
+
+//admin: Get specific user -/api/v1/admin/user/:id
+exports.getUser =  catchAsyncError(async (req,res,next)=>{
+   const user = await User.findById(req.params.id)
+   if(!user){
+    return next(new ErrorHandler(`user not found with this id ${req.params.id}`))
+   }
+   res.status(200).json({
+    success:true,
+    user
+})
+})
+
+//admin: update user  - /api/v1/admin/user/:id
+exports.updateUser = catchAsyncError(async (req,res,next)=>{
+    const newUserData = {
+        name: req.body.name,
+        email: req.body.email,
+        role: req.body.role
+    }
+
+    const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
+        new:true,
+        runValidators:true
+    })
+
+    res.status(200).json({
+        success: true,
+        user
+    })
+})
+
+//Admin: Delete user - /api/v1/admin/user/:id
+exports.deleteUser = catchAsyncError(async (req,res,next)=>{
+    const user = await User.findById(req.params.id)
+    if(!user){
+        return next(new ErrorHandler(`user not found with this id ${req.params.id}`))
+       }
+       await user.deleteOne()
+       res.status(200).json({
+        success: true
     })
 })
