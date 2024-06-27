@@ -31,44 +31,44 @@ exports.newProduct = catchAsyncError(async (req,res,next) => {
 })
 
 //Get single products - /api/vi/product/:id
-exports.getSingleProduct = async (req,res,next)=> {
-   const product = await Product.findById(req.params.id)
-
-   if(!product){
-       return next(new ErrorHandler('product not found', 400))
-   }
-
-   res.status(201).json({
-    success: true,
-    product
-   })
-}
-
+exports.getSingleProduct = catchAsyncError(async (req,res,next)=> {
+    const product = await Product.findById(req.params.id)
+ 
+    if(!product){
+        return next(new ErrorHandler('product not found', 400))
+    }
+ 
+    res.status(201).json({
+     success: true,
+     product
+    })
+ }
+ )
 //update product - /api/v1/product/:id
-exports.updateProduct = async (req,res,next)=>{
-      let product = await Product.findById(req.params.id)
+exports.updateProduct = catchAsyncError(async (req,res,next)=>{
+    let product = await Product.findById(req.params.id)
 
-      if(!product){
-        return res.status(404).json({
-            success:false,
-            message: "product not found"
-        })
-      }
-
-      product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
+    if(!product){
+      return res.status(404).json({
+          success:false,
+          message: "product not found"
       })
+    }
 
-      res.status(200).json({
-        success: true,
-        product
-      })
-}
+    product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    })
+
+    res.status(200).json({
+      success: true,
+      product
+    })
+})
 
 
 //delete product - /api/v1/product:id
-exports.deleteProduct = async (req,res,next)=>{
+exports.deleteProduct = catchAsyncError(async (req,res,next)=>{
     const product = Product.findById(req.params.id)
 
     if(!product){
@@ -86,3 +86,48 @@ exports.deleteProduct = async (req,res,next)=>{
     })
 
 }
+)
+//create review - api/v1/review
+exports.createReview = catchAsyncError(async (req,res,next) => {
+    const {productId, rating, comment} = req.body
+
+    const review = {
+        user : req.user.id,
+        rating,
+        comment
+    }
+
+    const product = await Product.findById(productId)
+    const isReviewed = product.reviews.find(review => {
+        return review.user.toString() == req.user.id.toString()
+    })
+
+    //finding user  review exists
+    if(isReviewed){
+        //updating the review
+        product.reviews.forEach(review => {
+            if(review.user.toString() == req.user.id.toString()){
+                review.comment = comment
+                review.rating = rating
+            }
+        })
+    }else{
+        product.reviews.push(review)
+        product.numOfReviews = product.reviews.length
+
+    }
+
+    //finding the vaerage of product reviews
+    product.ratings = product.reviews.reduce((acc,review) => {
+        return review.rating + acc
+    },0) / product.reviews.length
+    product.ratings = isNaN(product.ratings)?0:product.ratings
+
+    await product.save({validateBeforeSave: false})
+
+    res.status(200).json({
+        success: true
+    })
+
+
+})
