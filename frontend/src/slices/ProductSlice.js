@@ -6,7 +6,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const productSlice = createSlice({
     name: 'product',
     initialState: {
-        loading: false
+        loading: false,
+        product: {}
     },
     reducers: {
         productRequest(state, action){

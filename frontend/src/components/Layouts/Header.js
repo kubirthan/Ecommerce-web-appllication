@@ -5,7 +5,7 @@ const Header = () => {
     <nav className="navbar row">
     <div className="col-12 col-md-3">
       <div className="navbar-brand">
-        <img width="150px" src="./images/logo.png" />
+        <img width="150px" src="/images/logo.png" />
       </div>
     </div>
 
@@ -24,7 +24,6 @@ const Header = () => {
         </div>
       </div>
     </div>
-
     <div className="col-12 col-md-3 mt-4 mt-md-0 text-center">
       <button className="btn" id="login_btn">Login</button>
 
@@ -32,7 +31,6 @@ const Header = () => {
       <span className="ml-1" id="cart_count">2</span>
     </div>
   </nav>
-
   )
 }
 
