@@ -4,14 +4,20 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getproducts } from '../actions/productsActions'
 import Loader from './Layouts/Loader'
 import Product from './product/Product'
+import {toast} from 'react-toastify'
 
 const Home = () => {
   const dispatch = useDispatch()
-  const {products, loading} = useSelector((state) => state.productsState)
+  const {products, loading, error} = useSelector((state) => state.productsState)
 
   useEffect(()=>{
+    if(error){
+      return  toast.error(error,{
+        position: 'bottom-center'
+      })
+    }
       dispatch(getproducts)
-  }, [])
+  }, [error])
 
 
 
@@ -32,7 +38,6 @@ const Home = () => {
        </Fragment>
     }
     </Fragment>
-   
   )
 }
 
