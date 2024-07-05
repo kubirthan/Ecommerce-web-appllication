@@ -1,5 +1,4 @@
 import {combineReducers, configureStore} from '@reduxjs/toolkit'
-import {thunk} from 'redux-thunk';
 import productsReducer from './slices/ProductsSlice'
 import productReducer from './slices/ProductSlice'
 
