@@ -26,7 +26,7 @@ const Home = () => {
         position: 'bottom-center'
       })
     }
-      dispatch(getproducts(null,currentPage))
+      dispatch(getproducts(null,null,currentPage))
   }, [error, dispatch, currentPage])
 
 
@@ -41,7 +41,7 @@ const Home = () => {
       <section id="products" className="container mt-5">
         <div className="row">
           {products && products.map(product => (
-            <Product key={product._id} product={product}/>
+            <Product col={3} key={product._id} product={product}/>
           ))}
         </div>
       </section>
