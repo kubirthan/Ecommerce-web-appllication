@@ -11,7 +11,6 @@ import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css';
 import ToolTip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap.css'
-import { Cursor } from 'mongoose'
 
 
 
@@ -22,6 +21,7 @@ const ProductSearch = () => {
   const [price, setPrice] = useState([1,1000])
   const [priceChanged, setPriceChanged] = useState(price)
   const [category, setCategory] = useState(null)
+  const [rating, setRating] = useState(0)
 
   const { keyword } = useParams()
   const categories = [
@@ -51,8 +51,8 @@ const ProductSearch = () => {
         position: 'bottom-center'
       })
     }
-    dispatch(getproducts(keyword,price,category, currentPage))
-  }, [error, dispatch, currentPage, keyword,priceChanged,category])
+    dispatch(getproducts(keyword,price,category,rating, currentPage))
+  }, [error, dispatch, currentPage, keyword,priceChanged,category,rating])
 
 
 
@@ -114,6 +114,35 @@ const ProductSearch = () => {
                       )}
                       
                     </ul>
+                </div>
+                <hr className='my-5'/>
+                {/* ratings filter */}
+                <div className='mt-5'>
+                    <h4 className='mb-3'>Rating</h4>
+                    <ul className='pl-0'>
+                    {[5,4,3,2,1].map(star => 
+                        <li 
+                        style={{
+                          cursor:"pointer",
+                          listStyleType: "none"
+                        }}
+                        key={star}
+                        onClick={()=> {
+                          setRating(star)
+                        }}
+                        >
+                         <div className='rating-outer'>
+                          <div className='rating-inner'
+                          style={{
+                            width: `${star*20}%`
+                          }}>
+
+                          </div>
+                         </div>
+                        </li>
+                      )}
+                    </ul>
+                      
                 </div>
               </div>
               <div className='col-6 col-md-9 '>

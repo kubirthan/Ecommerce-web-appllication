@@ -26,7 +26,7 @@ const Home = () => {
         position: 'bottom-center'
       })
     }
-      dispatch(getproducts(null,null,null,currentPage))
+      dispatch(getproducts(null,null,null,null,currentPage))
   }, [error, dispatch, currentPage])
 
 
