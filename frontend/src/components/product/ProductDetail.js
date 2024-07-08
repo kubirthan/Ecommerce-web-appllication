@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect } from 'react'
-import { getproduct } from '../../actions/productAction'
+import { getproduct } from '../../actions/productActions'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import Loader from '../Layouts/Loader'
