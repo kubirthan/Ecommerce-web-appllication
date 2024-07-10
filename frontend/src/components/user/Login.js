@@ -3,7 +3,7 @@ import MetaData from '../Layouts/MetaData'
 import { clearAuthError, login } from '../../actions/userActions'
 import { useDispatch, useSelector } from 'react-redux'
 import {toast} from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Login = () => {
     const [email, setEmail] = useState("")
@@ -74,7 +74,7 @@ const Login = () => {
                         LOGIN
                     </button>
 
-                    <a href="#" className="float-right mt-3">New User?</a>
+                    <Link to="/register" className="float-right mt-3">New User?</Link>
                 </form>
             </div>
         </div>
