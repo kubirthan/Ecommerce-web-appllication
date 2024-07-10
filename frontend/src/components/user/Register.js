@@ -57,7 +57,7 @@ const Register = () => {
             })
             return
         }
-    },[error, isAuthenticated, dispatch])
+    },[error, isAuthenticated])
 
 
   return (
