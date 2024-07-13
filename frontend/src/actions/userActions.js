@@ -89,7 +89,7 @@ export const updateProfile = (userData) => async (dispatch) => {
         }
 
 
-       const {data} =  await axios.post('/api/v1/update', userData, config)
+       const {data} =  await axios.put('/api/v1/update', userData, config)
        dispatch(updateProfileSuccess(data))
         
     } catch (error) {
