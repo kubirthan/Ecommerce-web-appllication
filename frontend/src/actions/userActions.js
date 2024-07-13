@@ -10,7 +10,10 @@ import {
     loadUserRequest,
     loadUserSuccess,
     logoutSuccess,
-    logoutFail} from '../slices/authSlice'
+    logoutFail,
+    updateProfileRequest,
+    updateProfileSuccess,
+    updateProfileFail} from '../slices/authSlice'
 import axios from 'axios'
 
 export const login = (email, password) => async (dispatch) => {
@@ -30,7 +33,7 @@ export const clearAuthError = dispatch => {
     dispatch(clearError())
 }
 
-export const register = (userdata) => async (dispatch) => {
+export const register = (userData) => async (dispatch) => {
 
     try {
         dispatch(registerRequest())
@@ -41,7 +44,7 @@ export const register = (userdata) => async (dispatch) => {
         }
 
 
-       const {data} =  await axios.post('/api/v1/register', userdata, config)
+       const {data} =  await axios.post('/api/v1/register', userData, config)
        dispatch(registerSuccess(data))
         
     } catch (error) {
@@ -72,5 +75,24 @@ export const logout =  async (dispatch) => {
         
     } catch (error) {
         dispatch(logoutFail)
+    }
+}
+
+export const updateProfile = (userData) => async (dispatch) => {
+
+    try {
+        dispatch(updateProfileRequest())
+        const config = {
+            headers: {
+                'content-type':'multipart/form-data'
+            }
+        }
+
+
+       const {data} =  await axios.post('/api/v1/update', userData, config)
+       dispatch(updateProfileSuccess(data))
+        
+    } catch (error) {
+        dispatch(updateProfileFail(error.response.data.message))
     }
 }
