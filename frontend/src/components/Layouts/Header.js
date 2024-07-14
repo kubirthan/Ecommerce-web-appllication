@@ -7,6 +7,7 @@ import { logout } from '../../actions/userActions'
 
 const Header = () => {
   const {isAuthenticated, user} = useSelector(state => state.authState)
+  const {items:cartItems} = useSelector(state => state.cartSlice)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -47,8 +48,8 @@ const Header = () => {
       }
       
 
-      <span id="cart" className="ml-3">Cart</span>
-      <span className="ml-1" id="cart_count">3</span>
+      <Link to="/cart"><span id="cart" className="ml-3">Cart</span></Link>
+      <span className="ml-1" id="cart_count">{cartItems.length}</span>
     </div>
   </nav>
   )
