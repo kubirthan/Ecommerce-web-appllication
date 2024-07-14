@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import Loader from '../Layouts/Loader'
 import { Carousel } from 'react-bootstrap'
 import MetaData from '../Layouts/MetaData'
+import { addCartitem } from '../../actions/cartActions'
 
 const ProductDetail = () => {
     const { loading, product } = useSelector((state) => state.productState)
@@ -74,7 +75,9 @@ const ProductDetail = () => {
 
                                 <span className="btn btn-primary plus" onClick={increaseQty}>+</span>
                             </div>
-                            <button type="button" id="cart_btn" disabled={product.stock==0?true:false} className="btn btn-primary d-inline ml-4">Add to Cart</button>
+                            <button type="button" id="cart_btn" disabled={product.stock==0?true:false}
+                            onClick={()=>dispatch(addCartitem(product._id, quantity))}
+                            className="btn btn-primary d-inline ml-4">Add to Cart</button>
 
                             <hr />
 
