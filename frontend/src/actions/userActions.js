@@ -13,7 +13,10 @@ import {
     logoutFail,
     updateProfileRequest,
     updateProfileSuccess,
-    updateProfileFail} from '../slices/authSlice'
+    updateProfileFail,
+    updatePasswordRequest,
+    updatePasswordSuccess,
+    updatePasswordFail} from '../slices/authSlice'
 import axios from 'axios'
 
 export const login = (email, password) => async (dispatch) => {
@@ -94,5 +97,22 @@ export const updateProfile = (userData) => async (dispatch) => {
         
     } catch (error) {
         dispatch(updateProfileFail(error.response.data.message))
+    }
+}
+
+export const updatePassword = (formData) => async (dispatch) => {
+
+    try {
+        dispatch(updatePasswordRequest())
+        const config = {
+            headers: {
+                'content-type':'multipart/form-data'
+            }
+        }
+         await axios.put('/api/v1/password/change', formData, config)
+         dispatch(updatePasswordSuccess())
+        
+    } catch (error) {
+        dispatch(updatePasswordFail(error.response.data.message))
     }
 }

@@ -17,6 +17,7 @@ import { loadUser } from './actions/userActions';
 import Profile from './components/user/Profile';
 import ProtectedRoute from './components/route/ProtectedRoute';
 import UpdateProfile from './components/user/UpdateProfile';
+import UpdatePassword from './components/user/UpdatePassword';
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
             <Route path='/register' element={<Register />} />
             <Route path='/myprofile' element={<ProtectedRoute><Profile/></ProtectedRoute>} />
             <Route path='/myprofile/update' element={<ProtectedRoute><UpdateProfile/></ProtectedRoute>} />
+            <Route path='/myprofile/update/password' element={<ProtectedRoute><UpdatePassword/></ProtectedRoute>} />
           </Routes>
            </div>
           <Footer/>
