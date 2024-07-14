@@ -27,7 +27,7 @@ const Profile = () => {
                 <h4>Joined</h4>
                 <p>{String(user.createdAt).substring(0, 10)}</p>
 
-                <a href="#" className="btn btn-danger btn-block mt-5">
+                <a href="javascript;" className="btn btn-danger btn-block mt-5">
                     My Orders
                 </a>
 

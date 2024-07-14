@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearAuthError, updateProfile } from '../../actions/userActions'
 import { toast } from 'react-toastify'
+import { clearUpdateProfile } from '../../slices/authSlice'
 
 const UpdateProfile = () => {
-    const {loading, error, user, isUpdated} = useSelector(state => state.authState)
+    const { error, user, isUpdated} = useSelector(state => state.authState)
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [avatar, setAvatar] = useState("")
@@ -12,7 +13,7 @@ const UpdateProfile = () => {
     const dispatch = useDispatch()
 
     const onChangeAvatar = (e) => {
-        const reader = new  FileReader
+        const reader = new  FileReader()
            reader.onload = () => {
             if(reader.readyState === 2){
                 setAvatarPreview(reader.result)
@@ -44,6 +45,7 @@ const UpdateProfile = () => {
             toast('Profile updated successfully',{
                 type: 'success',
                 position: 'bottom-center',
+                onOpen: () =>dispatch(clearUpdateProfile())
             })
             return
         }

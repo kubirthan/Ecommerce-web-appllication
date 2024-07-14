@@ -133,7 +133,7 @@ export const forgotPassword = (formData) => async (dispatch) => {
             }
         }
          const {data} = await axios.post('/api/v1/password/forgot', formData, config)
-         dispatch(forgotPasswordSuccess())
+         dispatch(forgotPasswordSuccess(data))
         
     } catch (error) {
         dispatch(forgotPasswordFail(error.response.data.message))

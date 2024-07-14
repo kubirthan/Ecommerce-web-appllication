@@ -38,7 +38,7 @@ const ResetPassword = () => {
             })
             return
         }
-    }, [isAuthenticated,error,dispatch])
+    }, [isAuthenticated,error,dispatch,navigate])
 
   return (
     <div className="row wrapper">

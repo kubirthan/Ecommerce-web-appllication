@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {useDispatch, useSelector, usedispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import  { clearAuthError, register } from '../../actions/userActions'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
@@ -19,7 +19,7 @@ const Register = () => {
 
     const onChange = (e) => {
         if(e.target.name === 'avatar') {
-           const reader = new  FileReader
+           const reader = new  FileReader()
            reader.onload = () => {
             if(reader.readyState === 2){
                 setAvatarPreview(reader.result)
@@ -57,7 +57,7 @@ const Register = () => {
             })
             return
         }
-    },[error, isAuthenticated])
+    },[error, isAuthenticated,dispatch, navigate])
 
 
   return (
@@ -104,7 +104,7 @@ const Register = () => {
                       <img
                           src={avatarPreview}
                           className='rounded-circle'
-                          alt='image'
+                          alt='avatar'
                       />
                   </figure>
               </div>
