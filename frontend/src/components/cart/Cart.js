@@ -1,9 +1,22 @@
 import React, { Fragment } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { decreasedCartItemQty, increasedCartItemQty, removeItemFromCart } from '../../slices/cartSlice'
 
 const Cart = () => {
     const { items } = useSelector(state => state.cartState)
+    const dispatch = useDispatch()
+
+    const increaseQty = (item) => {
+        const count = item.quantity
+        if(item.stock == 0 || count >= item.stock) return
+        dispatch(increasedCartItemQty(item.product))
+    }
+    const decreaseQty = (item) => {
+        const count = item.quantity
+        if(count == 1) return
+        dispatch(decreasedCartItemQty(item.product))
+    }
 
     return (
         <Fragment>
@@ -43,7 +56,7 @@ const Cart = () => {
                         </div>
     
                         <div className="col-4 col-lg-1 mt-4 mt-lg-0">
-                            <i id="delete_cart_item" className="fa fa-trash btn btn-danger"></i>
+                            <i id="delete_cart_item" onClick={()=> dispatch(removeItemFromCart(item.product))} className="fa fa-trash btn btn-danger"></i>
                         </div>
     
                     </div>

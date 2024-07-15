@@ -53,11 +53,14 @@ const cartSlice = createSlice({
             })
             localStorage.setItem('cartItems', JSON.stringify(state.items))
         },
-
-        productFail(state,action){
+        removeItemFromCart(state, action) {
+            const filterItems = state.items.filter(item=> {
+                return item.product !== action.payload
+            })
+            localStorage.setItem('cartItems', JSON.stringify(filterItems))
             return {
-                loading: false,
-                error: action.payload
+                ...state,
+                items: filterItems
             }
         }
     }
@@ -65,6 +68,6 @@ const cartSlice = createSlice({
 
 const {actions, reducer} = cartSlice
 
-export const {addCartItemRequest,addCartItemSuccess,increasedCartItemQty,decreasedCartItemQty} = actions
+export const {addCartItemRequest,addCartItemSuccess,increasedCartItemQty,decreasedCartItemQty,removeItemFromCart} = actions
 
 export default reducer
