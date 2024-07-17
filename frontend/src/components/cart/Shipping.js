@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {countries} from 'countries-list'
 import { saveShippingInfo } from '../../slices/cartSlice'
 import { useNavigate } from 'react-router-dom'
+import CheckoutStep from './CheckoutStep'
 
 const Shipping = () => {
     const {shippingInfo} = useSelector(state=> state.cartSlice)
@@ -25,7 +26,9 @@ const Shipping = () => {
     }
 
   return (
-    <div className="row wrapper">
+    <Fragment>
+        <CheckoutStep shipping/>
+        <div className="row wrapper">
                 <div className="col-10 col-lg-5">
                     <form  onSubmit={submitHandler} className="shadow-lg">
                         <h1 className="mb-4">Shipping Info</h1>
@@ -116,6 +119,8 @@ const Shipping = () => {
                     </form>
                 </div>
             </div>
+    </Fragment>
+   
   )
 }
 
