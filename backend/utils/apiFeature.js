@@ -33,10 +33,10 @@ class APIFeatures {
             return this
     }
 
-    paginate(resPerPge) {
+    paginate(resPerPage) {
         const currentPage = Number(this.queryStr.page) || 1
-        const skip = resPerPge * currentPage - 1
-        this.query.limit(resPerPge).skip(skip)
+        const skip = resPerPage * (currentPage - 1)
+        this.query.limit(resPerPage).skip(skip)
         return this
     }
 }

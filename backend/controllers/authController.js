@@ -7,7 +7,14 @@ const crypto = require('crypto')
 
 //register user - /api/v1/register
 exports.registerUser = catchAsyncError(async (req, res, next)=> {
-    const {name, email, password, avatar} = req.body
+    const {name, email, password} = req.body
+
+    let avatar
+    if(req.file){
+        avatar = `${process.env.BACKEND_URL}/uploads/user/${req.file.originalname}`
+    }
+
+
     const user = await User.create({
         name,
         email,
@@ -66,9 +73,9 @@ exports.forgotPassword = catchAsyncError(async (req,res,next)=> {
    await user.save({validateBeforeSave: false})
 
    //Create reset url
-   const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/password/reset/${resetToken}`
+   const resetUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`
 
-   const message = `Your password rseset url is as follows nn
+   const message = `Your password rseset url is as follows \n\n
    ${resetUrl} \n\n If you have not request this email, then ignore it.`
 
    try{
@@ -150,9 +157,15 @@ exports.changePassword = catchAsyncError(async (req,res,next)=>{
 
 //update profile - /api/v1/update
 exports.updateProfile =  catchAsyncError(async (req,res,next)=>{
-    const newUserData = {
+    let newUserData = {
         name: req.body.name,
         email: req.body.email
+    }
+
+    let avatar
+    if(req.file){
+        avatar = `${process.env.BACKEND_URL}/uploads/user/${req.file.originalname}`
+        newUserData = {...newUserData, avatar}
     }
 
     const user = await User.findByIdAndUpdate(req.user.id, newUserData, {

@@ -6,14 +6,29 @@ const APIFeatures = require('../utils/apiFeature')
 
 //get products - /api/v1/products
 exports.getProducts = catchAsyncError(async (req,res,next) => {
-    const resPerPge = 2
+    const resPerPage = 3
 
-    const apiFeature = new APIFeatures(Product.find(), req.query).search().filter().paginate(resPerPge)
+    
+    let buildQuery = () => {
+        return new APIFeatures(Product.find(), req.query).search().filter()
+    }
 
-    const products = await apiFeature.query
+    const filterProductsCount = await buildQuery().query.countDocuments({})
+    
+    const totalProductscount = await Product.countDocuments({})
+
+    let productCount = totalProductscount
+
+    if(filterProductsCount !== totalProductscount) {
+        productCount = filterProductsCount
+    }
+
+    const products = await buildQuery().paginate(resPerPage).query
+
     res.status(200).json({
         success:true,
-        count: products.length,
+        count: productCount,
+        resPerPage,
         products
     })
 }  
@@ -37,7 +52,7 @@ exports.getSingleProduct = catchAsyncError(async (req,res,next)=> {
     if(!product){
         return next(new ErrorHandler('product not found', 400))
     }
- 
+    
     res.status(201).json({
      success: true,
      product
