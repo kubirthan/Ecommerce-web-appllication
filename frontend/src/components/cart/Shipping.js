@@ -4,9 +4,23 @@ import {countries} from 'countries-list'
 import { saveShippingInfo } from '../../slices/cartSlice'
 import { useNavigate } from 'react-router-dom'
 import CheckoutStep from './CheckoutStep'
+import { toast } from 'react-toastify'
+
+export const validateShipping = (shippingInfo, navigate) => {
+    if(!shippingInfo.address ||
+        !shippingInfo.city ||
+        !shippingInfo.country ||
+        !shippingInfo.phoneNo ||
+        !shippingInfo.postalCode 
+
+    ){
+        toast.error('Please fill the shipping information', {position: 'bottom-center'})
+        navigate('/shipping')
+    }
+}
 
 const Shipping = () => {
-    const {shippingInfo} = useSelector(state=> state.cartSlice)
+    const {shippingInfo} = useSelector(state=> state.cartState)
 
     const [address, setAddress] = useState(shippingInfo.address)
     const [city, setCity] = useState(shippingInfo.city)
