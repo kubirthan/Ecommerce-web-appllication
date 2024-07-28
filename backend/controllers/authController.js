@@ -1,28 +1,34 @@
-const catchAsyncError = require('../middlewares/catchAsyncError')
-const User = require('../models/userModel')
-const sendEmail = require('../utils/email')
-const ErrorHandler = require('../utils/errorHandler')
-const sendToken = require('../utils/jwt')
+const catchAsyncError = require('../middlewares/catchAsyncError');
+const User = require('../models/userModel');
+const sendEmail = require('../utils/email');
+const ErrorHandler = require('../utils/errorHandler');
+const sendToken = require('../utils/jwt');
 const crypto = require('crypto')
 
-//register user - /api/v1/register
-exports.registerUser = catchAsyncError(async (req, res, next)=> {
-    const {name, email, password} = req.body
+//Register User - /api/v1/register
+exports.registerUser = catchAsyncError(async (req, res, next) => {
+    const {name, email, password } = req.body
 
-    let avatar
-    if(req.file){
-        avatar = `${process.env.BACKEND_URL}/uploads/user/${req.file.originalname}`
+    let avatar;
+    
+    let BASE_URL = process.env.BACKEND_URL;
+    if(process.env.NODE_ENV === "production"){
+        BASE_URL = `${req.protocol}://${req.get('host')}`
     }
 
+    if(req.file){
+        avatar = `${BASE_URL}/uploads/user/${req.file.originalname}`
+    }
 
     const user = await User.create({
         name,
         email,
         password,
         avatar
-    })
+    });
 
     sendToken(user, 201, res)
+
 })
 
 //Login User - /api/v1/login
@@ -48,43 +54,48 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
     
 })
 
-//logout user - /api/v1/logout
-exports.logoutUser = (req,res,next) => {
-    res.cookie('token', null, {
-        expires: new Date(Date.now()),
-        httpOnly: true
-    })
-    .status(200)
-    .json({
-        success: true,
-        message: "loggedout"
-    })
-} 
+//Logout - /api/v1/logout
+exports.logoutUser = (req, res, next) => {
+        res.cookie('token',null, {
+            expires: new Date(Date.now()),
+            httpOnly: true
+        })
+        .status(200)
+        .json({
+            success: true,
+            message: "Loggedout"
+        })
 
-//forgot password - /api/v1/password/fprgot
-exports.forgotPassword = catchAsyncError(async (req,res,next)=> {
-   const user =  User.findOne({email: req.body.email})
+}
 
-   if(!user) {
-    return next(new ErrorHandler('user not found with this email', 404))
-   }
+//Forgot Password - /api/v1/password/forgot
+exports.forgotPassword = catchAsyncError( async (req, res, next)=>{
+    const user =  await User.findOne({email: req.body.email});
 
-   const resetToken = user.getResetToken()
-   await user.save({validateBeforeSave: false})
+    if(!user) {
+        return next(new ErrorHandler('User not found with this email', 404))
+    }
 
-   //Create reset url
-   const resetUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`
+    const resetToken = user.getResetToken();
+    await user.save({validateBeforeSave: false})
+    
+    let BASE_URL = process.env.FRONTEND_URL;
+    if(process.env.NODE_ENV === "production"){
+        BASE_URL = `${req.protocol}://${req.get('host')}`
+    }
 
-   const message = `Your password rseset url is as follows \n\n
-   ${resetUrl} \n\n If you have not request this email, then ignore it.`
 
-   try{
+    //Create reset url
+    const resetUrl = `${BASE_URL}/password/reset/${resetToken}`;
 
+    const message = `Your password reset url is as follows \n\n 
+    ${resetUrl} \n\n If you have not requested this email, then ignore it.`;
+
+    try{
         sendEmail({
             email: user.email,
-            subject: "jvl cart password recovery",
+            subject: "JVLcart Password Recovery",
             message
-        
         })
 
         res.status(200).json({
@@ -92,125 +103,129 @@ exports.forgotPassword = catchAsyncError(async (req,res,next)=> {
             message: `Email sent to ${user.email}`
         })
 
-   }catch(error){
-        user.resetpasswordToken = undefined
-        user.resetpasswordTokenExpire = undefined
-        await user.save({validateBeforeSave: false})
-        return next(new ErrorHandler(error.message),500)
-   }
-})
+    }catch(error){
+        user.resetPasswordToken = undefined;
+        user.resetPasswordTokenExpire = undefined;
+        await user.save({validateBeforeSave: false});
+        return next(new ErrorHandler(error.message), 500)
+    }
 
-//reset password - /api/v1/password/reset/:token
-exports.resetPassword = catchAsyncError(async (req,res,next)=> {
-  const resetpasswordToken =  crypto.createHash('sha256').update(req.params.token).digest('hex')
+})  
 
-  const user = await User.findOne(
-    {resetpasswordToken,
-        resetpasswordTokenExpire: {
+//Reset Password - /api/v1/password/reset/:token
+exports.resetPassword = catchAsyncError( async (req, res, next) => {
+   const resetPasswordToken =  crypto.createHash('sha256').update(req.params.token).digest('hex'); 
+
+    const user = await User.findOne( {
+        resetPasswordToken,
+        resetPasswordTokenExpire: {
             $gt : Date.now()
         }
-    }
-)
+    } )
 
     if(!user) {
-    return next(new ErrorHandler('password reset token is invalid or expired'))
+        return next(new ErrorHandler('Password reset token is invalid or expired'));
     }
 
-    if(req.body.password !== req.body.confirmPassword)
-        return next(new ErrorHandler('password does not match')
-    )
+    if( req.body.password !== req.body.confirmPassword) {
+        return next(new ErrorHandler('Password does not match'));
+    }
 
-    user.password = req.body.password
-    user.resetpasswordToken = undefined
-    user.resetpasswordTokenExpire = undefined
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordTokenExpire = undefined;
     await user.save({validateBeforeSave: false})
-
     sendToken(user, 201, res)
+
 })
 
-//Get user profile - /api/v1/myprofile
-exports.getUserProfile = catchAsyncError(async (req,res,next)=> {
-  const user =  await User.findById(req.user.id)
-  res.status(200).json({
-        success: true,
+//Get User Profile - /api/v1/myprofile
+exports.getUserProfile = catchAsyncError(async (req, res, next) => {
+   const user = await User.findById(req.user.id)
+   res.status(200).json({
+        success:true,
         user
-  })
+   })
 })
 
-//change password 
-exports.changePassword = catchAsyncError(async (req,res,next)=>{
-    const user = await User.findById(req.user.id).select('+password')
-
-
+//Change Password  - api/v1/password/change
+exports.changePassword  = catchAsyncError(async (req, res, next) => {
+    const user = await User.findById(req.user.id).select('+password');
     //check old password
     if(!await user.isValidPassword(req.body.oldPassword)) {
-        return next(new ErrorHandler('old password is incorrect', 401))
+        return next(new ErrorHandler('Old password is incorrect', 401));
     }
 
-    //assigning new password - /api/v1/password/change
-    user.password = req.body.password
-    await user.save()
+    //assigning new password
+    user.password = req.body.password;
+    await user.save();
     res.status(200).json({
-        success: true
-  })
-})
+        success:true,
+    })
+ })
 
-//update profile - /api/v1/update
-exports.updateProfile =  catchAsyncError(async (req,res,next)=>{
+//Update Profile - /api/v1/update
+exports.updateProfile = catchAsyncError(async (req, res, next) => {
     let newUserData = {
         name: req.body.name,
         email: req.body.email
     }
 
-    let avatar
+    let avatar;
+    let BASE_URL = process.env.BACKEND_URL;
+    if(process.env.NODE_ENV === "production"){
+        BASE_URL = `${req.protocol}://${req.get('host')}`
+    }
+
     if(req.file){
-        avatar = `${process.env.BACKEND_URL}/uploads/user/${req.file.originalname}`
-        newUserData = {...newUserData, avatar}
+        avatar = `${BASE_URL}/uploads/user/${req.file.originalname}`
+        newUserData = {...newUserData,avatar }
     }
 
     const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
-        new:true,
-        runValidators:true
+        new: true,
+        runValidators: true,
     })
 
     res.status(200).json({
         success: true,
         user
     })
+
 })
 
-//admin: Get all users - /api/v1/admin/users
-exports.getAllUsers =  catchAsyncError(async (req,res,next)=>{
-    const users = await User.find()
-    res.status(200).json({
-        success:true,
-        users
-    })
-})
-
-//admin: Get specific user -/api/v1/admin/user/:id
-exports.getUser =  catchAsyncError(async (req,res,next)=>{
-   const user = await User.findById(req.params.id)
-   if(!user){
-    return next(new ErrorHandler(`user not found with this id ${req.params.id}`))
-   }
+//Admin: Get All Users - /api/v1/admin/users
+exports.getAllUsers = catchAsyncError(async (req, res, next) => {
+   const users = await User.find();
    res.status(200).json({
-    success:true,
-    user
-})
+        success: true,
+        users
+   })
 })
 
-//admin: update user  - /api/v1/admin/user/:id
-exports.updateUser = catchAsyncError(async (req,res,next)=>{
+//Admin: Get Specific User - api/v1/admin/user/:id
+exports.getUser = catchAsyncError(async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+    if(!user) {
+        return next(new ErrorHandler(`User not found with this id ${req.params.id}`))
+    }
+    res.status(200).json({
+        success: true,
+        user
+   })
+});
+
+//Admin: Update User - api/v1/admin/user/:id
+exports.updateUser = catchAsyncError(async (req, res, next) => {
     const newUserData = {
         name: req.body.name,
         email: req.body.email,
         role: req.body.role
     }
 
-    const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
-        new:true,
-        runValidators:true
+    const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
+        new: true,
+        runValidators: true,
     })
 
     res.status(200).json({
@@ -219,14 +234,14 @@ exports.updateUser = catchAsyncError(async (req,res,next)=>{
     })
 })
 
-//Admin: Delete user - /api/v1/admin/user/:id
-exports.deleteUser = catchAsyncError(async (req,res,next)=>{
-    const user = await User.findById(req.params.id)
-    if(!user){
-        return next(new ErrorHandler(`user not found with this id ${req.params.id}`))
-       }
-       await user.deleteOne()
-       res.status(200).json({
-        success: true
+//Admin: Delete User - api/v1/admin/user/:id
+exports.deleteUser = catchAsyncError(async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+    if(!user) {
+        return next(new ErrorHandler(`User not found with this id ${req.params.id}`))
+    }
+    await user.remove();
+    res.status(200).json({
+        success: true,
     })
 })

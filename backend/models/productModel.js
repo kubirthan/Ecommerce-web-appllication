@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
     name : {
@@ -88,5 +88,6 @@ const productSchema = new mongoose.Schema({
     }
 })
 
-let Schema = mongoose.model('Product', productSchema)
-module.exports = Schema
+let schema = mongoose.model('Product', productSchema)
+
+module.exports = schema
