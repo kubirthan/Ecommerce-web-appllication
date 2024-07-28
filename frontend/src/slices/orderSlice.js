@@ -164,6 +164,24 @@ export const {
     createOrderFail,
     createOrderSuccess,
     createOrderRequest,
+    clearError,
+    userOrdersFail,
+    userOrdersSuccess,
+    userOrdersRequest,
+    orderDetailFail,
+    orderDetailSuccess,
+    orderDetailRequest,
+    adminOrdersFail,
+    adminOrdersRequest,
+    adminOrdersSuccess,
+    deleteOrderFail,
+    deleteOrderRequest,
+    deleteOrderSuccess,
+    updateOrderFail,
+    updateOrderRequest,
+    updateOrderSuccess,
+    clearOrderDeleted,
+    clearOrderUpdated
  } = actions;
 
 export default reducer;

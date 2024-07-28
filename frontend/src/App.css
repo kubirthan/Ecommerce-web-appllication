@@ -298,7 +298,7 @@ footer {
   justify-content: center;
   align-items: center;
   margin-top: 5rem;
-  
+
   font-weight: 700;
 }
 
@@ -525,6 +525,11 @@ footer {
 #sidebar ul li a:hover {
   color: #232f3e;
   background: #fff;
+}
+
+#sidebar ul li div.dropdown-menu a{
+  color: black;
+
 }
 
 #sidebar ul li a i {

@@ -1,8 +1,8 @@
 import { Fragment, useEffect} from 'react'
-import MetaData from '../layouts/MetaData';
+import MetaData from '../Layouts/MetaData';
 import {MDBDataTable} from 'mdbreact'
 import { useDispatch, useSelector } from 'react-redux';
-import { userOrders as userOrdersAction } from '../../actions/orderActions';
+import { userOrders as userOrdersAction } from '../../actions/orderAction';
 import { Link } from 'react-router-dom';
 
 export default function UserOrders () {

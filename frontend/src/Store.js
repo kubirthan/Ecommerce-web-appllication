@@ -1,16 +1,19 @@
-import {combineReducers, configureStore} from '@reduxjs/toolkit'
-import productsReducer from './slices/ProductsSlice'
-import productReducer from './slices/ProductSlice'
-import authReducer from './slices/authSlice'
-import cartReducer from './slices/cartSlice'
-import orderreducer from './slices/orderSlice'
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import productsReducer from "../src/slices/ProductsSlice";
+import productReducer from '../src/slices/ProductSlice';
+import authReducer from './slices/authSlice';
+import cartReducer from './slices/cartSlice';
+import orderReducer from './slices/orderSlice';
+import userReducer from './slices/userSlice'
+
 
 const reducer = combineReducers({
     productsState: productsReducer,
-    productState: productReducer,
+    productState: productReducer ,
     authState: authReducer,
     cartState: cartReducer,
-    
+    orderState: orderReducer,
+    userState: userReducer
 })
 
 
@@ -18,5 +21,4 @@ const store = configureStore({
     reducer,
 })
 
-
-export default store
+export default store;

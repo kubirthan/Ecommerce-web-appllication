@@ -1,47 +1,47 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { clearAuthError, resetPassword } from '../../actions/userActions'
-import { useNavigate, useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
+import { useEffect, useState} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { resetPassword, clearAuthError } from '../../actions/userActions';
+import {useNavigate, useParams} from 'react-router-dom';
+import { toast } from 'react-toastify';
 
+export default function ResetPassword() {
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const dispatch = useDispatch();
+    const { isAuthenticated, error }  = useSelector(state => state.authState)
+    const navigate = useNavigate();
+    const { token } = useParams();
 
-const ResetPassword = () => {
-    const [password, setpassword] = useState("")
-    const [confirmPassword, setconfirmPassword] = useState("")
-    const dispatch = useDispatch()
-    const {isAuthenticated, error} = useSelector(state => state.authState)
-    const navigate = useNavigate()
-    const {token} = useParams()
-
-    const submitHandler = (e) => {
-        e.preventDefault()
-        const formData = new FormData()
-        formData.append('password', password)
-        formData.append('confirmPassword', confirmPassword)
-        dispatch(resetPassword(formData,token))
+    const submitHandler  = (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('password', password);
+        formData.append('confirmPassword', confirmPassword);
+        
+        dispatch(resetPassword(formData, token))
     }
 
-    useEffect(() => {
+    useEffect(()=> {
         if(isAuthenticated) {
-            toast('Password reset success!',{
+            toast('Password Reset Success!', {
                 type: 'success',
-                position: 'bottom-center',
+                position: toast.POSITION.BOTTOM_CENTER
             })
             navigate('/')
-            return
+            return;
         }
-        if(error) {
+        if(error)  {
             toast(error, {
-                 position: 'bottom-center',
-                 type: 'error',
-                 onOpen: ()=> {dispatch(clearAuthError)}
+                position: toast.POSITION.BOTTOM_CENTER,
+                type: 'error',
+                onOpen: ()=> { dispatch(clearAuthError) }
             })
             return
         }
-    }, [isAuthenticated,error,dispatch,navigate])
+    },[isAuthenticated, error, dispatch, navigate])
 
-  return (
-    <div className="row wrapper">
+    return (
+        <div className="row wrapper">
             <div className="col-10 col-lg-5">
                 <form onSubmit={submitHandler} className="shadow-lg">
                     <h1 className="mb-3">New Password</h1>
@@ -53,7 +53,7 @@ const ResetPassword = () => {
                             id="password_field"
                             className="form-control"
                             value={password}
-                            onChange={e => setpassword(e.target.value)}
+                            onChange={e => setPassword(e.target.value)}
                         />
                     </div>
 
@@ -64,7 +64,7 @@ const ResetPassword = () => {
                             id="confirm_password_field"
                             className="form-control"
                             value={confirmPassword}
-                            onChange={e => setconfirmPassword(e.target.value)}
+                            onChange={e => setConfirmPassword(e.target.value)}
                         />
                     </div>
 
@@ -78,7 +78,5 @@ const ResetPassword = () => {
                 </form>
             </div>
         </div>
-  )
+    )
 }
-
-export default ResetPassword   
